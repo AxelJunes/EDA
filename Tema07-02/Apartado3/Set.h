@@ -129,15 +129,14 @@ template<class T>
 void Set<T>::erase(){
 	first = 0;
 	last = 0;
-	size = 0;
 }
 
 template<class T>
 void Set<T>::write(ostream& sOut){
 	//sOut << "{";
-	for (int i = first; i < last; i++)
+	for (int i = first; i < last-1; i++)
 		sOut << elems[i] << " "; //<< ",";
-	if (size > 0) sOut << elems[last];
+	if (size > 0) sOut << elems[last-1];
 	//sOut << "}";
 }
 
@@ -158,7 +157,7 @@ void Set<T>::read(istream& sIn){
 //Encuentra el mayor elemento del conjunto
 template<class T>
 T Set<T>::getMax() const{ //O(1)
-	return elems[last];
+	return elems[last-1];
 }
 
 //Encuentra el menor elemento del conjunto
@@ -173,18 +172,16 @@ void Set<T>::removeMax(){ //O(1)
 	//El último elemento de la lista ahora es el anterior al que
 	//antes era el último elemento
 	last--;
-	size--;
 }
 
 //Elimina el menor elemento del conjunto
 template<class T>
-void Set<T>::removeMin(){ //O(n) -> n = size
+void Set<T>::removeMin(){ //O(1)
 	//El primer elemento de la lista ahora es el siguiente al que
 	//antes era el último elemento
 	//De esta manera no hace falta mover todos los elementos a la derecha del
 	//mínimo y la complejidad de la operación se convierte en constante.
 	first++;
-	size--;
 }
 
 //---------------------------------------------------
@@ -246,8 +243,8 @@ void Set<T>::binSearch(const T& x, bool& found, int& pos) const {
 	// Pre: los size primeros elementos de elems están ordenados
 	//      size >= 0
 
-	pos = binSearchAux(x, first, last);
-	found = (pos >= 0) && (pos < size) && (elems[pos] == x);
+	pos = binSearchAux(x, first, last-1);
+	found = (pos >= first) && (pos <= last) && (elems[pos] == x);
 
 	// Post : devuelve el mayor índice i (0 <= i <= size-1) que cumple
 	//        elems[i] <= x
