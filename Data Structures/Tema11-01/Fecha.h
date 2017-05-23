@@ -1,3 +1,6 @@
+#include <ctime>
+using namespace std;
+
 class Fecha{
 	private:
 		int dia;
@@ -9,13 +12,16 @@ class Fecha{
 		* Constructor por defecto
 		*/
 		Fecha(){
-			this->dia = 0;
-			this->hora = 0;
-			this->minuto = 0;
+			//Fecha actual
+			time_t now = time(0);
+			tm *ltm = localtime(&now);
+			this->dia = ltm->tm_mday ;
+			this->hora = 1 + ltm->tm_hour;
+			this->minuto = 1 + ltm->tm_min;
 		}
 
 		/**
-		* Constructor con parámetros
+		* Constructor con parï¿½metros
 		*/
 		Fecha(int dia, int hora, int minuto) {
 			this->dia = dia;
@@ -23,21 +29,21 @@ class Fecha{
 			this->minuto = minuto;
 		}
 
-		//Métodos get
+		//Mï¿½todos get
 
-		int getDia() {
+		int getDia() const{
 			return this->dia;
 		}
 
-		int getHora() {
+		int getHora() const{
 			return this->hora;
 		}
 
-		int getMinuto() {
+		int getMinuto() const{
 			return this->minuto;
 		}
 
-		//Métodos set
+		//Mï¿½todos set
 
 		void setDia(int dia) {
 			this->dia = dia;
@@ -51,7 +57,7 @@ class Fecha{
 			this->minuto = minuto;
 		}
 
-		// Métodos de clase
+		// Mï¿½todos de clase
 
 		/**
 		* Devuelve true si las dos fechas son iguales
