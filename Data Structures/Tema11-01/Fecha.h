@@ -13,18 +13,22 @@ class Fecha{
 		*/
 		Fecha(){
 			//Fecha actual
-			time_t now = time(0);
-			tm *ltm = localtime(&now);
-			this->dia = ltm->tm_mday ;
-			this->hora = 1 + ltm->tm_hour;
-			this->minuto = 1 + ltm->tm_min;
+			time_t currentTime;
+			struct tm *localTime;
+
+			time(&currentTime);                   // Get the current time
+			localTime = localtime(&currentTime);
+
+			this->dia = localTime->tm_mday;
+			this->hora = 1 + localTime->tm_hour;
+			this->minuto = 1 + localTime->tm_min;
 		}
 
 		/**
 		* Constructor con par�metros
 		*/
 		Fecha(int dia, int hora, int minuto) {
-			this->dia = dia;
+			this->dia = dia;	
 			this->hora = hora;
 			this->minuto = minuto;
 		}

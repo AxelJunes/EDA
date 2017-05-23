@@ -30,44 +30,43 @@ class Consultorio{
 		}
 
 		/**
-		* Constructor con par�metros
+		* Constructor con parametros
 		*/
 		Consultorio(HashMap<Medico, TreeMap<Paciente, Fecha> > consultas) {
 			this->consultas = consultas;
 		}
 
-		// M�todos get
+		// Metodos get
 		HashMap<Medico, TreeMap<Paciente, Fecha> > getConsultas() const{
 			return this->consultas;
 		}
 
 
-		// M�todos set
+		// Metodos set
 		void setConsultas(HashMap<Medico, TreeMap<Paciente, Fecha> > consultas) {
 			this->consultas = consultas;
 		}
 
 
-		// M�todos de la clase
+		// Metodos de la clase
 
 		/**
-		* Da de alta un nuevo m�dico en el consultorio. Si el m�dico ya estaba
+		* Da de alta un nuevo medico en el consultorio. Si el medico ya estaba
 		* en el consultorio, este no se modifica.
 		*/
 		void nuevoMedico(Medico m) {
 			TreeMap<Paciente, Fecha> citas;
-			//Si el m�dico no estaba en el consultorio, lo a�adimos con una lista vac�a
+			//Si el medico no estaba en el consultorio, lo anadimos con una lista vacia
 			if(!this->consultas.contains(m))
 				this->consultas.insert(m, citas);
 		}
 
 		/**
-		* El paciente p pide consulta con el m�dico m para una fecha f.
+		* El paciente p pide consulta con el medico m para una fecha f.
 		*/
 		void pideConsulta(Paciente p, Medico m, Fecha f) {
 			if (!this->consultas.contains(m)) {
-				cout << "Medico no existente" << endl;
-				//throw new ExcepcionTAD("Medico no existente");
+				throw "Medico no existente";
 			}
 			else {
 				TreeMap<Paciente, Fecha> &citas = this->consultas[m];
@@ -82,22 +81,18 @@ class Consultorio{
 					it.next();
 				}
 				if(ocupada){
-					cout << "Fecha ocupada" << endl;
-					//throw new ExcepcionTAD("Fecha ocupada");
+					throw "Fecha ocupada";
 				}
 				else {
-					//Creamos la nueva cita con el dia, la hora y el minuto actual
-					Paciente paciente;
-					Fecha fecha;
 					//Se inserta en la lista de citas
-					this->consultas[m].insert(paciente, fecha);
+					this->consultas[m].insert(p, f);
 				}
 			}
 		}
 
 		/**
 		* Consulta el paciente al que le toca el turno de ser atendido por el
-		* m�dico m. Suponemos que el siguiente paciente es el que tiene una
+		* medico m. Suponemos que el siguiente paciente es el que tiene una
 		* fecha menor.
 		*/
 		Paciente siguientePaciente(Medico m) {
@@ -118,7 +113,7 @@ class Consultorio{
 		}
 
 		/**
-		* Elimina el siguiente paciente del m�dico m. Suponemos que 
+		* Elimina el siguiente paciente del medico m. Suponemos que 
 		* el siguiente paciente es el que tiene una fecha menor.
 		*/
 		void atiendeConsulta(Medico m) {
@@ -128,11 +123,11 @@ class Consultorio{
 		}
 
 		/**
-		* Devuelve la lista de pares paciente,fecha del m�dico m que tienen cita el d�a d.
-		* Se supone que el d�a es un n�mero entero correcto.
+		* Devuelve la lista de pares paciente,fecha del m�dico m que tienen cita el dia d.
+		* Se supone que el dia es un numero entero correcto.
 		*/
 		List<pair<Paciente, Fecha> > listaPacientes(Medico m, Fecha f) {
-			//Lista de citas del m�dico
+			//Lista de citas del medico
 			TreeMap<Paciente, Fecha> &citas = this->consultas[m];
 			//Lista de pacientes a devolver
 			List<pair<Paciente, Fecha> > pacientes;
