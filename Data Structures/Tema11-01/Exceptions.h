@@ -11,8 +11,11 @@
 #ifndef __EXCEPCIONES_H
 #define __EXCEPCIONES_H
 
+#include <iostream>
 #include <string>
 #include <iosfwd>
+using namespace std;
+
 /**
  Clase de la que heredan todas las excepciones, y
  que proporciona el atributo que almacena el

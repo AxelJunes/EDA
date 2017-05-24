@@ -8,10 +8,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include "Consultorio.h"
 
 using namespace std;
-
-#include "Consultorio.h"
 
 bool resuelve() {
 
@@ -59,7 +58,7 @@ bool resuelve() {
 				cout << "---\n";
 			}
 		}
-		catch (invalid_argument e) { cout << e.what() << '\n' << "---\n"; }
+		catch (ExcepcionTAD e) { cout << e.msg() << '\n' << "---\n"; }
 	}
 	cout << "------\n";
 	return true;

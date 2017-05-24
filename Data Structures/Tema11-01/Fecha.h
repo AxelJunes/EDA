@@ -1,3 +1,4 @@
+#include <iostream>
 #include <ctime>
 using namespace std;
 
@@ -16,7 +17,7 @@ class Fecha{
 			time_t currentTime;
 			struct tm *localTime;
 
-			time(&currentTime);                   // Get the current time
+			time(&currentTime); // Get the current time
 			localTime = localtime(&currentTime);
 
 			this->dia = localTime->tm_mday;
@@ -25,7 +26,7 @@ class Fecha{
 		}
 
 		/**
-		* Constructor con parï¿½metros
+		* Constructor con parametros
 		*/
 		Fecha(int dia, int hora, int minuto) {
 			this->dia = dia;	
@@ -33,7 +34,7 @@ class Fecha{
 			this->minuto = minuto;
 		}
 
-		//Mï¿½todos get
+		//Metodos get
 
 		int getDia() const{
 			return this->dia;
@@ -47,7 +48,7 @@ class Fecha{
 			return this->minuto;
 		}
 
-		//Mï¿½todos set
+		//Metodos set
 
 		void setDia(int dia) {
 			this->dia = dia;
@@ -61,7 +62,7 @@ class Fecha{
 			this->minuto = minuto;
 		}
 
-		// Mï¿½todos de clase
+		// Metodos de clase
 
 		/**
 		* Devuelve true si las dos fechas son iguales
@@ -70,5 +71,15 @@ class Fecha{
 			return (this->dia == fecha.dia)
 				&& (this->hora == fecha.hora)
 				&& (this->minuto == fecha.minuto);
+		}
+
+		/**
+		* Devuelve true si la fecha es menor que la que entra
+		* por parámetro
+		*/
+		bool operator<(const Fecha &fecha) const {
+			return (this->dia <= fecha.dia)
+				&& (this->hora <= fecha.hora)
+				&& (this->minuto < fecha.minuto);
 		}
 };

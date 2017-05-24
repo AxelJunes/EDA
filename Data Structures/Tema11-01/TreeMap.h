@@ -13,9 +13,10 @@
 #ifndef __TREEMAP_H
 #define __TREEMAP_H
 
+#include <iostream>
 #include "Exceptions.h"
-
 #include "Stack.h" // Usado internamente por los iteradores
+using namespace std;
 
 /**
  Implementaci�n din�mica del TAD Dictionary utilizando 

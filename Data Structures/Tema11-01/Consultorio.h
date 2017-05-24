@@ -2,12 +2,13 @@
 // Author: Axel Junestrand
 //----------------------------
 
+#include <iostream>
 #include <string>
 #include <utility> // pair
-#include "List.h"
-#include "Fecha.h"
-#include "TreeMap.h"
 #include "HashMap.h"
+#include "List.h"
+#include "TreeMap.h"
+#include "Fecha.h"
 using namespace std;
 
 // Definiciones de tipos
@@ -19,31 +20,31 @@ typedef string Paciente;
 */
 class Consultorio{
 	private:
-		HashMap<Medico, TreeMap<Paciente, Fecha> > consultas;
+		HashMap<Medico, TreeMap<Fecha, Paciente> > consultas;
 
 	public:
 		/**
 		* Constructor por defecto
 		*/
 		Consultorio() {
-			this->consultas = *new HashMap<Medico, TreeMap<Paciente, Fecha> >();
+			this->consultas = *new HashMap<Medico, TreeMap<Fecha, Paciente> >();
 		}
 
 		/**
 		* Constructor con parametros
 		*/
-		Consultorio(HashMap<Medico, TreeMap<Paciente, Fecha> > consultas) {
+		Consultorio(HashMap<Medico, TreeMap<Fecha, Paciente> > consultas) {
 			this->consultas = consultas;
 		}
 
 		// Metodos get
-		HashMap<Medico, TreeMap<Paciente, Fecha> > getConsultas() const{
+		HashMap<Medico, TreeMap<Fecha, Paciente> > getConsultas() const{
 			return this->consultas;
 		}
 
 
 		// Metodos set
-		void setConsultas(HashMap<Medico, TreeMap<Paciente, Fecha> > consultas) {
+		void setConsultas(HashMap<Medico, TreeMap<Fecha, Paciente> > consultas) {
 			this->consultas = consultas;
 		}
 
@@ -55,7 +56,7 @@ class Consultorio{
 		* en el consultorio, este no se modifica.
 		*/
 		void nuevoMedico(Medico m) {
-			TreeMap<Paciente, Fecha> citas;
+			TreeMap<Fecha, Paciente> citas;
 			//Si el medico no estaba en el consultorio, lo anadimos con una lista vacia
 			if(!this->consultas.contains(m))
 				this->consultas.insert(m, citas);
@@ -66,26 +67,17 @@ class Consultorio{
 		*/
 		void pideConsulta(Paciente p, Medico m, Fecha f) {
 			if (!this->consultas.contains(m)) {
-				throw "Medico no existente";
+				throw ExcepcionTAD("Medico no existente");
 			}
 			else {
-				TreeMap<Paciente, Fecha> &citas = this->consultas[m];
-				bool ocupada = false;
-				//Iteramos sobre el TreeMap de citas para buscar si ya está ocupada la fecha
-				TreeMap<Paciente, Fecha>::ConstIterator it = citas.cbegin();
-				while (!ocupada && it != citas.cend()) {
-					//Comprobamos si la fecha existe en la lista
-					if (it.value() == f) {
-						ocupada = true;
-					}
-					it.next();
-				}
-				if(ocupada){
-					throw "Fecha ocupada";
+				TreeMap<Fecha, Paciente> &citas = this->consultas[m];
+				//Comprobamos si la fecha está en el TreeMap
+				if(citas.contains(f)){
+					throw ExcepcionTAD("Fecha ocupada");
 				}
 				else {
 					//Se inserta en la lista de citas
-					this->consultas[m].insert(p, f);
+					this->consultas[m].insert(f, p);
 				}
 			}
 		}
@@ -97,17 +89,17 @@ class Consultorio{
 		*/
 		Paciente siguientePaciente(Medico m) {
 			if (!this->consultas.contains(m)) {
-				throw "Medico no existente";
+				throw ExcepcionTAD("Medico no existente");
 			}
 			else {
 				if (this->consultas[m].empty()) {
-					throw "No hay pacientes";
+					throw ExcepcionTAD("No hay pacientes");
 				}
 				else {
 					//Devolvemos el siguiente paciente en la lista
-					TreeMap<Paciente, Fecha> citas = this->consultas[m];
-					TreeMap<Paciente, Fecha>::ConstIterator it = citas.cbegin();
-					return it.key();
+					TreeMap<Fecha, Paciente> &citas = this->consultas[m];
+					TreeMap<Fecha, Paciente>::ConstIterator it = citas.cbegin();
+					return it.value();
 				}
 			}
 		}
@@ -117,8 +109,10 @@ class Consultorio{
 		* el siguiente paciente es el que tiene una fecha menor.
 		*/
 		void atiendeConsulta(Medico m) {
-			TreeMap<Paciente, Fecha> &citas = this->consultas[m];
-			TreeMap<Paciente, Fecha>::ConstIterator it = citas.cbegin();
+			TreeMap<Fecha, Paciente> &citas = this->consultas[m];
+			if(citas.empty())
+				throw ExcepcionTAD("No hay pacientes");
+			TreeMap<Fecha, Paciente>::ConstIterator it = citas.cbegin();
 			this->consultas[m].erase(it.key());
 		}
 
@@ -128,19 +122,19 @@ class Consultorio{
 		*/
 		List<pair<Paciente, Fecha> > listaPacientes(Medico m, Fecha f) {
 			//Lista de citas del medico
-			TreeMap<Paciente, Fecha> &citas = this->consultas[m];
+			TreeMap<Fecha, Paciente> &citas = this->consultas[m];
 			//Lista de pacientes a devolver
 			List<pair<Paciente, Fecha> > pacientes;
 
-			TreeMap<Paciente, Fecha>::ConstIterator it = citas.cbegin();
+			TreeMap<Fecha, Paciente>::ConstIterator it = citas.cbegin();
 			while (it != citas.cend()) {
 				//Metemos en la lista de pacientes todos los pacientes
 				//que tengan cita ese dia
-				if (it.value().getDia() == f.getDia()) {
+				if (it.key().getDia() == f.getDia()) {
 					//Declaramos un par con los datos de la cita
 					pair<Paciente, Fecha> cita;
-					cita.first = it.key();
-					cita.second = it.value();
+					cita.first = it.value();
+					cita.second = it.key();
 					pacientes.push_back(cita);
 				}
 				it.next();
