@@ -4,19 +4,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <fstream>
-using namespace std;
-
+// Author: Axel Junestrand
 #include "Ipud.h"
-
-
-#ifndef DOMJUDGE
-
-ifstream in("cola.txt");
-
-auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
-
-#endif
+using namespace std;
 
 bool resuelve() {
 
@@ -32,9 +22,9 @@ bool resuelve() {
 		try {
 			if (inst == "addSong"){
 				cin >> song;
-				cin >> songInfo.artista;
-				cin >> songInfo.duracion;
-				ipud.addSong(song, songInfo.artista, songInfo.duracion);
+				cin >> songInfo.a;
+				cin >> songInfo.d;
+				ipud.addSong(song, songInfo.a, songInfo.d);
 			}
 			if (inst == "addToPlaylist"){
 				cin >> song;
@@ -45,6 +35,8 @@ bool resuelve() {
 				cout << "Current " << result << endl;
 			}
 			if (inst == "play"){
+				if (!ipud.getPlaylist().empty())
+					cout << "Sonando " << ipud.getPlaylist().front() << endl;
 				ipud.play();
 			}
 			if (inst == "totalTime"){
@@ -66,7 +58,9 @@ bool resuelve() {
 			}
 		}
 		catch (invalid_argument e) {
-			cout << e.what() << '\n' << "----\n";
+			cout << e.what() << '\n';
+			cout << "ERROR " << inst << endl;
+			cout << "----\n";
 		}
 		cin >> inst;
 	}
@@ -74,6 +68,6 @@ bool resuelve() {
 }
 
 int main() {
-	while (resuelve()){};
+	while (resuelve());
 	return 0;
 }

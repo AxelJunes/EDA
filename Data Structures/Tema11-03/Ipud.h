@@ -14,6 +14,7 @@ typedef int Duracion;
 typedef struct {
 	Artista a;
 	Duracion d;
+	bool played;
 }InfoSong;
 
 /**
@@ -86,6 +87,7 @@ class Ipud {
 				InfoSong info;
 				info.a = a;
 				info.d = d;
+				info.played = false; // Se inicializa la canción como no reproducida
 				this->songs.insert(s, info);
 			}
 		}
@@ -117,7 +119,7 @@ class Ipud {
 		*/
 		IdSong current() { // O(1)
 			if (this->playlist.empty())
-				throw invalid_argument("No hay canciones en la playlist!");
+				throw invalid_argument("No hay canciones en la lista");
 			return this->playlist.front();
 		}
 
@@ -125,12 +127,39 @@ class Ipud {
 		* La primera canción de la lista de reproducción abandona la lista de reproducción y se registra como
 		* reproducida. Si la lista es vacía, la acción no tiene efecto.
 		*/
-		//void play() {
-		//	if (this->playlist.empty())
-		//		return;
-		//	// Si la lista de reproducción no está vacía
-		//	this->
-		//}
+		void play() {
+			if (this->playlist.empty())
+				return;
+			// Si la lista de reproducción no está vacía
+			if (!this->songs.at(this->playlist.front()).played){
+				// Si la canción no estaba ya en la lista de reproducidas
+				this->played.push_back(this->playlist.front());
+				// Ponemos la canción como ya reproducida
+				InfoSong info;
+				info.a = this->songs.at(this->playlist.front()).a;
+				info.d = this->songs.at(this->playlist.front()).d;
+				info.played = true;
+				// Insertamos otra vez la canción para actualizarla
+				this->songs.insert(this->playlist.front(), info);
+				// La quitamos de la playlist
+				this->playlist.pop_front();
+			}
+			else{
+				// Si la canción estaba en la lista de reproducidas
+				List<IdSong> &played = this->played;
+				// Iteramos sobre la playlist para sumar las duraciones
+				List<IdSong>::Iterator it = played.begin();
+				while (it != played.end()){
+					if (it.elem() == this->playlist.front()){
+						this->playlist.erase(it);
+						this->playlist.pop_front();
+						// Añadimos la canción a la lista de reproducidas
+						this->played.push_back(it.elem());
+					}
+					it++;
+				}
+			}
+		}
 
 		/**
 		* Devuelve la suma de las duraciones de las canciones que integran la lista de reproducción actual.
@@ -143,7 +172,7 @@ class Ipud {
 			List<IdSong>::ConstIterator it = playlist.cbegin();
 			while (it != playlist.cend()){
 				//Buscamos la duración de la canción en el HashMap
-				int duracion = this->songs.find(it.elem()).value.d;
+				int duracion = this->songs.at(it.elem()).d;
 				time += duracion;
 				it++;
 			}
@@ -158,14 +187,14 @@ class Ipud {
 		List<IdSong> recent(int N) { // O(N)
 			if (this->played.size() < N)
 				return this->played;
-			List<IdSong> &played = this->playlist;
+			List<IdSong> &played = this->played;
 			List<IdSong> recent;
 			// Iteramos sobre la lista de reproducidas
 			List<IdSong>::ConstIterator it = played.cbegin();
 			int n = 0;
 			while (n < N && it != played.cend()){
 				//Metemos en la lista de recientes las canciones por las que pase el iterador
-				recent.push_back(it.elem());
+				recent.push_front(it.elem());
 				it++;
 				//Incrementamos el contador de canciones leídas
 				n++;
@@ -178,5 +207,8 @@ class Ipud {
 		*/
 		void deleteSong(IdSong s) {
 			this->songs.erase(s);
+
+			this->played.erase(s);
+			this
 		}
 };
